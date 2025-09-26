@@ -16,6 +16,7 @@
     <modules>
         <module>service-discovery</module>
         <module>user-service</module>
+        <module>first-service</module>
     </modules>
 
 	<name>msa-project</name>
