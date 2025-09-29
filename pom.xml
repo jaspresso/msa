@@ -17,6 +17,8 @@
         <module>service-discovery</module>
         <module>user-service</module>
         <module>first-service</module>
+        <module>second-service</module>
+        <module>apigateway-service</module>
     </modules>
 
 	<name>msa-project</name>
