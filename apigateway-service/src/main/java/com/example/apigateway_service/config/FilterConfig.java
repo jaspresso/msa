@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 //Spring 컨텍스트 초기화 단계에서 가장 먼저 Bean 정의용으로 등록.
-@Configuration
+//@Configuration
 public class FilterConfig {
     Environment env;
 
@@ -15,7 +15,7 @@ public class FilterConfig {
         this.env = env;
     }
 
-    @Bean
+   // @Bean
     public RouteLocator getRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route(r -> r.path("/first-service/**")
