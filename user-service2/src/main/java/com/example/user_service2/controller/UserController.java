@@ -54,6 +54,9 @@ public class UserController {
         ModelMapper mapper = new ModelMapper();
 
         // 매칭 전략 설정
+        // - STRICT: 소스와 대상의 프로퍼티 이름이 엄격히 일치해야 매핑
+        // - STANDARD(기본): 약간 유연한 매핑 허용
+        // - LOOSE: 더 느슨한 매핑
         // MatchingStrategies.STRICT는 필드명의 정확한 일치를 요구
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
