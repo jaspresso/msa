@@ -27,6 +27,12 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
         userDto.setUserId(UUID.randomUUID().toString());
 
+        //ModelMapper 사용 대신 직접 setter,getter메소드를 사용할 수도 있다.
+//        UserEntity userEntity = new UserEntity();
+//        userEntity.setName(userDto.getName());
+//        userEntity.setEmail(userDto.getEmail());
+//        ...
+
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserEntity userEntity = mapper.map(userDto, UserEntity.class);

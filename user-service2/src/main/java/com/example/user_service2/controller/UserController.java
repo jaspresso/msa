@@ -24,7 +24,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    public UserController(Environment env, Greeting greeting, UserService userService){
+    public UserController(Environment env, Greeting greeting, UserService userService) {
         this.env = env;
         this.greeting = greeting;
         this.userService = userService;
@@ -36,6 +36,7 @@ public class UserController {
                 + ", port(local.server.port)=" + env.getProperty("local.server.port")
                 + ", port(server.port)=" + env.getProperty("server.port"));
     }
+
     @GetMapping("/welcome")
     public String welcome(HttpServletRequest request) {
         log.info("users.welcome ip: {}, {}, {}, {}", request.getRemoteAddr()
@@ -46,15 +47,32 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user){
+    public String createUser(@RequestBody RequestUser user) {
+        // ModelMapper는 서로 다른 타입(여기서는 RequestUser -> UserDto)의 필드 값을
+        // 자동으로 복사(mapping)해주는 라이브러리
         ModelMapper mapper = new ModelMapper();
+
+        // 매칭 전략 설정
+        // MatchingStrategies.STRICT는 필드명의 정확한 일치를 요구
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
+        //user의 필드 값을 UserDto 타입의 새 인스턴스로 복사하여 반환
         UserDto userDto = mapper.map(user, UserDto.class);
         userService.createUser(userDto);
 
-        ResponseUser responseUser = mapper.map(userDto, ResponseUser.class);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
+        return "Create user method called.";
     }
+
+//    @PostMapping("/users")
+//    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user){
+//        ModelMapper mapper = new ModelMapper();
+//        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+//
+//        UserDto userDto = mapper.map(user, UserDto.class);
+//        userService.createUser(userDto);
+//
+//        ResponseUser responseUser = mapper.map(userDto, ResponseUser.class);
+//
+//        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
+//    }
 }
