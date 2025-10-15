@@ -1,6 +1,7 @@
 package com.example.user_service2.controller;
 
 import com.example.user_service2.dto.UserDto;
+import com.example.user_service2.jpa.UserEntity;
 import com.example.user_service2.service.UserService;
 import com.example.user_service2.vo.Greeting;
 import com.example.user_service2.vo.RequestUser;
@@ -14,6 +15,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user-service2")
@@ -68,4 +72,37 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
         //return "Create user method called.";
     }
+
+    // 전체 사용자 목록을 조회하는 엔드포인트
+    @GetMapping("/users")
+    public ResponseEntity getUsers() {
+        // userService를 통해 모든 사용자 정보를 가져옴 (JPA Repository의 findAll()과 유사)
+        Iterable<UserEntity> userList = userService.getUserByAll();
+
+        // 결과를 담을 리스트 (엔티티를 그대로 반환하지 않고, 응답 전용 DTO로 변환)
+        List<ResponseUser> result = new ArrayList<>();
+
+        // 각 UserEntity 객체를 ResponseUser DTO로 변환
+        userList.forEach(v -> {
+            // ModelMapper를 사용해 Entity → DTO 자동 매핑
+            result.add(new ModelMapper().map(v, ResponseUser.class));
+        });
+
+        // HTTP 200 OK 상태 코드와 함께 결과 리스트 반환
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    // 특정 사용자 ID(userId)에 해당하는 사용자 정보를 조회하는 엔드포인트
+    @GetMapping("/users/{userId}")
+    public ResponseEntity getUser(@PathVariable("userId") String userId) {
+        // userService를 통해 userId로 사용자 정보를 조회 (존재하지 않으면 예외 발생)
+        UserDto userDto = userService.getUserByUserId(userId);
+
+        // 서비스 계층의 UserDto를 응답용 DTO(ResponseUser)로 변환
+        ResponseUser returnValue = new ModelMapper().map(userDto, ResponseUser.class);
+
+        // HTTP 200 OK 상태 코드와 함께 변환된 사용자 정보를 반환
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+    }
+
 }
