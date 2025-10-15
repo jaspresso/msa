@@ -4,7 +4,7 @@ server:
 
 spring:
   application:
-#    name: second-service
+    #    name: second-service
     name: my-second-service
 
 eureka:
@@ -16,4 +16,3 @@ eureka:
   instance:
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
     prefer-ip-address: true
-
