@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user-service2")
+//@RequestMapping("/user-service2")
+@RequestMapping("/")
 @Slf4j
 public class UserController {
     private Environment env;

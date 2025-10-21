@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,9 @@ import java.util.UUID;
 @Slf4j
 public class UserServiceImpl implements UserService {
     Environment env;
+
     UserRepository userRepository;
+
     BCryptPasswordEncoder passwordEncoder;
 
     public UserServiceImpl(Environment env, UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
@@ -30,19 +34,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity userEntity = userRepository.findByEmail(username);
+
+        if (userEntity == null)
+            throw new UsernameNotFoundException(username + ": not found");
+
+        return new User(userEntity.getEmail(), userEntity.getEncryptedPwd(),
+                true, true, true, true,
+                new ArrayList<>());
+    }
+
+    @Override
     public UserDto createUser(UserDto userDto) {
         userDto.setUserId(UUID.randomUUID().toString());
-
-        //ModelMapper 사용 대신 직접 setter,getter메소드를 사용할 수도 있다.
-//        UserEntity userEntity = new UserEntity();
-//        userEntity.setName(userDto.getName());
-//        userEntity.setEmail(userDto.getEmail());
-//        ...
 
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserEntity userEntity = mapper.map(userDto, UserEntity.class);
-        //userEntity.setEncryptedPwd("encrypted_password");
+//        userEntity.setEncryptedPwd("encrypted_password");
         userEntity.setEncryptedPwd(passwordEncoder.encode(userDto.getPwd()));
 
         userRepository.save(userEntity);
@@ -55,19 +65,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserByUserId(String userId) {
         UserEntity userEntity = userRepository.findByUserId(userId);
-        // find~ 라는 메소드명 규칙에 따라 JPA가 내부적으로
-        // UserEntity 클래스의 필드명 userId를 기준으로
-        // 자동으로 다음 SQL을 생성한다.
-        // SELECT * FROM user_entity WHERE user_id = ?;
 
         if (userEntity == null)
             throw new UsernameNotFoundException("User not found");
-        // 데이터가 없을 때 Exception에러를 반환하도록 조치한다.
 
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
         List<ResponseOrder> orderList = new ArrayList<>();
-        userDto.setOrders(orderList); //주문 데이터 셋팅
+        userDto.setOrders(orderList);
 
         return userDto;
     }
@@ -77,4 +82,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    @Override
+    public UserDto getUserDetailsByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity == null)
+            throw new UsernameNotFoundException(email);
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        UserDto userDto = mapper.map(userEntity, UserDto.class);
+        return userDto;
+    }
 }
