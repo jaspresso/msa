@@ -78,5 +78,5 @@ spring:
                     postLogger: true
 
 token:
-  secret: bXktdmVyeS1sb25nLXNlY3JldC1rZXktMTIzNDU2Nzg5MDEyMzQ1Ng==
+  secret: a-string-secret-at-least-256-bits-long-123456789
   expiration-time: 86400000 #10 days
