@@ -40,7 +40,10 @@ public class UserController {
     public String status() {
         return String.format("It's Working in User Service"
                 + ", port(local.server.port)=" + env.getProperty("local.server.port")
-                + ", port(server.port)=" + env.getProperty("server.port"));
+                + ", port(server.port)=" + env.getProperty("server.port")
+                + ", gateway ip(env)=" + env.getProperty("gateway.ip")
+                + ", token secret key=" + env.getProperty("token.secret")
+                + ", token expiration time=" + env.getProperty("token.expiration-time"));
     }
 
     @GetMapping("/welcome")
@@ -53,8 +56,8 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user){
-    //public String createUser(@RequestBody RequestUser user) {
+    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user) {
+        //public String createUser(@RequestBody RequestUser user) {
         // ModelMapper는 서로 다른 타입(여기서는 RequestUser -> UserDto)의 필드 값을
         // 자동으로 복사(mapping)해주는 라이브러리
         ModelMapper mapper = new ModelMapper();

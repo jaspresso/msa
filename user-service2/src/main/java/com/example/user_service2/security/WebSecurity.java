@@ -70,6 +70,9 @@ public class WebSecurity {
                         // 회원가입 요청(POST /users)은 인증 없이 접근 가능
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
 
+                        .requestMatchers("/actuator/**").permitAll()  // 특정 경로 허용
+                        .requestMatchers("/health-check/**").permitAll()  // 특정 경로 허용
+
                         // 나머지 모든 요청은 IP 기반 접근 제어 (로컬 또는 지정된 IP만 허용)
                         .requestMatchers("/**").access(
                                 new WebExpressionAuthorizationManager(
