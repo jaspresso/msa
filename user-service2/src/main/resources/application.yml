@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: user-service2
+# config:
+#   import: "optional:configserver:http://localhost:8888"
   h2:
     console:
       enabled: true
@@ -44,3 +46,12 @@ token:
   secret: a-string-secret-at-least-256-bits-long-123456789
   expiration-time: 86400000 #10 days
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - refresh
+          - health
+          - beans
+          - info

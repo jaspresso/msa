@@ -71,6 +71,7 @@ public class WebSecurity {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
 
                         .requestMatchers("/health-check/**").permitAll()  // 특정 경로 허용
+                        .requestMatchers("/actuator/**").permitAll()  // 특정 경로 허용
 
                         // 나머지 모든 요청은 IP 기반 접근 제어 (로컬 또는 지정된 IP만 허용)
                         .requestMatchers("/**").access(
