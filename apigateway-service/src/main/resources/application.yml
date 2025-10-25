@@ -77,6 +77,17 @@ spring:
                     preLogger: true
                     postLogger: true
 
-token:
-  secret: a-string-secret-at-least-256-bits-long-123456789
-  expiration-time: 86400000 #10 days
+#token:
+#  secret: a-string-secret-at-least-256-bits-long-123456789
+#  expiration-time: 86400000 #10 days
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - refresh
+          - health
+          - beans
+          - info
+          - httpexchanges
